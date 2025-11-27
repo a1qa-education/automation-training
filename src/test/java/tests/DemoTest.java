@@ -15,6 +15,7 @@ public class DemoTest extends BaseTest{
     public void addRemoveElementTest() {
         Assert.assertTrue(mainPage.waitForPageToOpen(), "Page is not open");
         mainPage.clickNavigationLink(NavigationLinks.ADD_REMOVE_ELEMENT);
+        Assert.assertTrue(addRemovePage.isPageOpen(), "Page is not open");
         addRemovePage.clickAddElementBtn();
         Assert.assertTrue(addRemovePage.isRemoveBtnExist(), "Remove element button did not appear on the page");
         Assert.assertTrue(addRemovePage.isRemoveBtnDisplayed(), "Remove element button is not displayed");

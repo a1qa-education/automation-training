@@ -5,7 +5,7 @@ import utils.Browser;
 import utils.WaitUtils;
 
 public class BasePage {
-    private By uniqueElementLocator = null;
+    private final By uniqueElementLocator;
 
     public BasePage(By uniqueElementLocator) {
         this.uniqueElementLocator = uniqueElementLocator;
