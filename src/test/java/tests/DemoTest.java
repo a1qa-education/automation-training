@@ -19,8 +19,8 @@ public class DemoTest extends BaseTest{
         driver.findElement(addElementBtn).click();
         driver.findElement(addElementBtn).click();
         driver.findElement(addElementBtn).click();
-        //should fail as we have 4 elements
-        //to fix add a line of code to click on any removeElementBtn
+        //должен упасть, т.к. на странице 4 элемента
+        //для исправления добавить клик на первый из removeElementBtn
         Assert.assertEquals(driver.findElements(removeElementBtn).size(), 3, "A wrong number of buttons on the page");
     }
 }

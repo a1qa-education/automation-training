@@ -11,8 +11,8 @@ public class DynamicControlsTest extends BaseTest {
     public void dynamicControlsTest() {
         driver.findElement(dynamicControls).click();
         driver.findElement(enable).click();
-        // todo: assert input is enabled
-        // todo: input random generated text
-        // todo: assert inputted text
+        // todo: ассерт с проверкой того что поле ввода enabled
+        // todo: отправить в поле ввода случайно сгенерированный текст (например, UUID)
+        // todo: ассерт с проверкой того, что текст отображается
     }
 }

@@ -9,6 +9,6 @@ public class DataTableTest extends BaseTest {
     @Test
     public void dataTableTest() {
         driver.findElement(sortableDataTables).click();
-        // todo: assert due sum
+        // todo: добавить проверку суммы в столбце
     }
 }

@@ -14,8 +14,8 @@ public class FileDownloadTest extends BaseTest {
         driver.findElement(fileDownload).click();
         Assert.assertTrue(driver.findElement(fileNameXpath).isDisplayed(), "File is not displayed");
         driver.findElement(fileNameXpath).click();
-        // todo: assert file is downloaded
+        // todo: проверка того что файл загружен
     }
 
-    // todo: delete file
+    // todo: удалить скачанный файл после теста
 }

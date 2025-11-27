@@ -17,19 +17,16 @@ public class FramesTest extends BaseTest {
     public void framesTest() {
         driver.findElement(frames).click();
         driver.findElement(nestedFrames).click();
-        //to access 'left' and 'middle' frames we need to switch to 'top' frame
+        //для доступа к 'left' и 'middle' фреймам нам нужно сперва переключиться на 'top' фрейм
         driver.switchTo().frame(topFrameName);
-        //todo: switch to a middle frame
+        //todo: переключиться на middle фрейм
 
         driver.switchTo().parentFrame();
-        //todo: switch to a left frame
+        //todo: переключиться на left фрейм
 
         Assert.assertTrue(driver.findElement(leftFrame).isDisplayed(), "LEFT is not displayed");
-        //todo: switch to a default context,
-        // navigate back
-        // and check that `nested frames` button is displayed
-
-        driver.navigate().back();
-
+        //todo: переключиться на контекст по умолчанию (default context),
+        // перейти назад
+        // проверить что ссылка `nested frames` отображается
     }
 }
