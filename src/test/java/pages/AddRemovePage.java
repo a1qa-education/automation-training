@@ -3,7 +3,7 @@ package pages;
 import org.openqa.selenium.By;
 import utils.Browser;
 
-public class AddRemovePage extends MainPage{
+public class AddRemovePage extends BasePage{
     private final By addElementBtn = By.xpath("//*[@onclick='addElement()']");
     private final By removeElementBtn = By.xpath("//*[@onclick='deleteElement()']");
 

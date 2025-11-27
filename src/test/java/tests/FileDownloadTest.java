@@ -4,6 +4,8 @@ import org.openqa.selenium.By;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import static utils.XpathTemplates.PRECISE_TEXT_XPATH;
+
 public class FileDownloadTest extends BaseTest {
     private final String fileName = "Test.txt";
     private final By fileDownload = By.xpath(String.format(PRECISE_TEXT_XPATH, "File Download"));
@@ -14,8 +16,8 @@ public class FileDownloadTest extends BaseTest {
         driver.findElement(fileDownload).click();
         Assert.assertTrue(driver.findElement(fileNameXpath).isDisplayed(), "File is not displayed");
         driver.findElement(fileNameXpath).click();
-        // todo: assert file is downloaded
+        // todo: проверка того что файл загружен
     }
 
-    // todo: delete file
+    // todo: удалить скачанный файл после теста
 }

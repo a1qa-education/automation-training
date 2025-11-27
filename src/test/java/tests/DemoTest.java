@@ -1,17 +1,20 @@
 package tests;
 
-import org.openqa.selenium.By;
+import enums.NavigationLinks;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import pages.AddRemovePage;
+import pages.MainPage;
 
 public class DemoTest extends BaseTest{
-    private AddRemovePage addRemovePage = new AddRemovePage();
-    private final int expectedNumberOfButtons = 4;
+    private final AddRemovePage addRemovePage = new AddRemovePage();
+    private final MainPage mainPage = new MainPage();
+    private static final int EXPECTED_NUMBER_OF_BUTTONS = 4;
 
     @Test
     public void addRemoveElementTest() {
-        //mainPage.clickNavigationLink(ADD_REMOVE_ELEMENTS);
+        Assert.assertTrue(mainPage.waitForPageToOpen(), "Page is not open");
+        mainPage.clickNavigationLink(NavigationLinks.ADD_REMOVE_ELEMENT);
         addRemovePage.clickAddElementBtn();
         Assert.assertTrue(addRemovePage.isRemoveBtnExist(), "Remove element button did not appear on the page");
         Assert.assertTrue(addRemovePage.isRemoveBtnDisplayed(), "Remove element button is not displayed");
@@ -20,6 +23,6 @@ public class DemoTest extends BaseTest{
         addRemovePage.clickAddElementBtn();
         addRemovePage.clickAddElementBtn();
 
-        Assert.assertEquals(addRemovePage.getCountRemoveElementBtn(), expectedNumberOfButtons, "There's a wrong number of buttons on the page");
+        Assert.assertEquals(addRemovePage.getCountRemoveElementBtn(), EXPECTED_NUMBER_OF_BUTTONS, "There's a wrong number of buttons on the page");
     }
 }

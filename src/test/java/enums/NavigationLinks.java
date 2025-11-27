@@ -1,10 +1,10 @@
 package enums;
 
 public enum NavigationLinks {
-    ADD_REMOVE_ELEMENT("ABC"),
-    NESTED_FRAMES("DEF");
+    ADD_REMOVE_ELEMENT("Add/Remove Elements"),
+    FRAMES("Frames");
 
-    private String navigationText;
+    private final String navigationText;
 
     NavigationLinks(String navigationText){
         this.navigationText = navigationText;
