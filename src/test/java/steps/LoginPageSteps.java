@@ -1,13 +1,18 @@
 package steps;
 
 import enums.LoginStatus;
+import io.cucumber.datatable.DataTable;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.testng.Assert;
 import pages.LoginPage;
 
+import java.util.List;
+import java.util.Map;
+
 public class LoginPageSteps {
-    private LoginPage loginPage = new LoginPage();
+    private final LoginPage loginPage = new LoginPage();
 
     @When("пользователь указывает логин {string}")
     public void enterLogin(String login) {
@@ -28,11 +33,23 @@ public class LoginPageSteps {
     public void verifyLoginStatus(LoginStatus status) {
         switch (status) {
             case SUCCESS:
-                Assert.assertTrue(loginPage.isSuccessMessageDisplayed(), "Сообщение об успешном логине не отображено");// check success message
+                Assert.assertTrue(loginPage.isSuccessMessageDisplayed(), "Сообщение об успешном логине не отображено");
                 break;
             case FAILURE:
-                Assert.assertFalse(loginPage.isFailureMessageDisplayed(), "Сообщение о неуспешном логине не отображено");// check success message
+                Assert.assertFalse(loginPage.isFailureMessageDisplayed(), "Сообщение о неуспешном логине не отображено");
                 break;
         }
+    }
+
+    @When("пользователь вводит учетные данные")
+    public void пользовательВводитУчетныеДанные(DataTable dataTable) {
+        List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
+        if (rows.isEmpty()) {
+            throw new IllegalArgumentException("Таблица учетных данных пуста");
+        }
+        Map<String, String> creds = rows.get(0);
+
+        loginPage.sendTextToUsernameInput(creds.get("login"));
+        loginPage.sendTextToPasswordInput(creds.get("password"));
     }
 }

@@ -13,17 +13,17 @@ public class DemoTest extends BaseTest{
 
     @Test
     public void addRemoveElementTest() {
-        Assert.assertTrue(mainPage.waitForPageToOpen(), "Page is not open");
+        Assert.assertTrue(mainPage.waitForPageToOpen(), "Страница не открыта");
         mainPage.clickNavigationLink(NavigationLinks.ADD_REMOVE_ELEMENT);
-        Assert.assertTrue(addRemovePage.isPageOpen(), "Page is not open");
+        Assert.assertTrue(addRemovePage.isPageOpen(), "Страница не открыта");
         addRemovePage.clickAddElementBtn();
-        Assert.assertTrue(addRemovePage.isRemoveBtnExist(), "Remove element button did not appear on the page");
-        Assert.assertTrue(addRemovePage.isRemoveBtnDisplayed(), "Remove element button is not displayed");
+        Assert.assertTrue(addRemovePage.isRemoveBtnExist(), "Кнопка Remove element не появилась на странице");
+        Assert.assertTrue(addRemovePage.isRemoveBtnDisplayed(), "Кнопка Remove element не отображается на странице");
 
         addRemovePage.clickAddElementBtn();
         addRemovePage.clickAddElementBtn();
         addRemovePage.clickAddElementBtn();
 
-        Assert.assertEquals(addRemovePage.getCountRemoveElementBtn(), EXPECTED_NUMBER_OF_BUTTONS, "There's a wrong number of buttons on the page");
+        Assert.assertEquals(addRemovePage.getCountRemoveElementBtn(), EXPECTED_NUMBER_OF_BUTTONS, "Некорректное количество элементов на странице");
     }
 }

@@ -12,16 +12,16 @@ public class FramesTest extends BaseTest {
     private final By nestedFrames = By.xpath(String.format(PRECISE_TEXT_XPATH, "Nested Frames"));
     private final By middleFrame = By.xpath(String.format(PRECISE_TEXT_XPATH, "MIDDLE"));
     private final By leftFrame = By.xpath(String.format(PARTICULAR_TEXT_XPATH, "LEFT"));
-    private final String topFrameName = "frame-top";
-    private final String middleFrameName = "frame-middle";
-    private final String leftFrameName = "frame-left";
+    private final static String TOP_FRAME_NAME = "frame-top";
+    private final static String MIDDLE_FRAME_NAME = "frame-middle";
+    private final static String LEFT_FRAME_NAME = "frame-left";
 
     @Test
     public void framesTest() {
         driver.findElement(frames).click();
         driver.findElement(nestedFrames).click();
         //для доступа к 'left' и 'middle' фреймам нам нужно сперва переключиться на 'top' фрейм
-        driver.switchTo().frame(topFrameName);
+        driver.switchTo().frame(TOP_FRAME_NAME);
         //todo: переключиться на middle фрейм
 
         driver.switchTo().parentFrame();

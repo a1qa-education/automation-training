@@ -15,10 +15,6 @@ public class AddRemovePage extends BasePage{
         Browser.getInstance().findElement(addElementBtn).click();
     }
 
-    public void clickRemoveElementBtn(){
-        Browser.getInstance().findElement(removeElementBtn).click();
-    }
-
     public int getCountRemoveElementBtn(){
         return Browser.getInstance().findElements(removeElementBtn).size();
     }
