@@ -3,38 +3,37 @@ stages:
   - report
 
 variables:
-  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
-  SELENIUM_REMOTE_URL: "http://selenium:4444/wd/hub"
+  MAVEN_CLI_OPTS: "-B -Dmaven.test.failure.ignore=false"
 
-# --- Stage 1: Run Selenium + Cucumber tests ---
-selenium-tests:
+# Stage 1: Run tests
+unit-tests:
   stage: test
-  image: maven:3.9.3-eclipse-temurin-17
+  image: maven:3.9.2-eclipse-temurin-17
   services:
-    - name: selenium/standalone-chrome:latest
+    - name: selenium/standalone-chrome:114.0
       alias: selenium
   script:
-    # Clean, compile, and run TestNG suite pointing to your TestRunner
-    - mvn clean test
+    - mvn $MAVEN_CLI_OPTS clean test
   artifacts:
-    when: always
     paths:
       - target/allure-results
       - target/surefire-reports
-    reports:
-      junit: target/surefire-reports/*.xml
+    expire_in: 1 week
 
+# Stage 2: Generate Allure report
 allure-report:
   stage: report
-  image: frankescobar/allure-docker-service:2.30.0
-  dependencies:
-    - selenium-tests
+  image: frankescobar/allure-docker-service:2.29.0
+  needs:
+    - job: unit-tests
+      artifacts: true
   script:
-    # Generate HTML report from Allure results
+    # Ensure target/allure-results exists
+    - mkdir -p target/allure-results
+    - cp -r target/allure-results/* target/allure-results/
+    # Generate report
     - allure generate target/allure-results --clean -o target/allure-report
   artifacts:
-    when: always
     paths:
       - target/allure-report
-  only:
-    - branches
+    expire_in: 1 week
