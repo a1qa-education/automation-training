@@ -4,9 +4,9 @@
         <listener class-name="io.qameta.allure.testng.AllureTestNg"/>
     </listeners>
 
-    <test name="Tests">
+    <test name="Cucumber tests">
         <packages>
-            <package name="tests"/>
+            <package name="TestRunners.TestRunner"/>
         </packages>
     </test>
 </suite>
