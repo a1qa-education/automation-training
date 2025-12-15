@@ -4,9 +4,9 @@ stages:
 
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
-  SELENIUM_REMOTE_URL: "http://selenium:4444/wd/hub" # if using RemoteWebDriver
+  SELENIUM_REMOTE_URL: "http://selenium:4444/wd/hub"
 
-# --- Stage 1: Run Selenium tests ---
+# --- Stage 1: Run Selenium + Cucumber tests ---
 selenium-tests:
   stage: test
   image: maven:3.9.3-eclipse-temurin-17
@@ -14,6 +14,7 @@ selenium-tests:
     - name: selenium/standalone-chrome:latest
       alias: selenium
   script:
+    # Clean, compile, and run TestNG suite pointing to your TestRunner
     - mvn clean test
   artifacts:
     when: always
@@ -30,6 +31,7 @@ allure-report:
   dependencies:
     - selenium-tests
   script:
+    # Generate HTML report from Allure results
     - allure generate target/allure-results --clean -o target/allure-report
   artifacts:
     when: always
