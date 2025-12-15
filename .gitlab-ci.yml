@@ -12,7 +12,6 @@ unit-tests:
   image: maven:3.9.2-eclipse-temurin-17
   script:
     - mvn clean test
-    - mkdir -p target/allure-results
   artifacts:
     name: "unit-tests-artifacts"
     paths:
@@ -40,7 +39,6 @@ pages:
   dependencies:
     - allure-report
   script:
-    # Copy the Allure report to public/ for GitLab Pages
     - mkdir -p public
     - cp -r target/allure-report/* public/
   artifacts:
