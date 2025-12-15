@@ -1,0 +1,41 @@
+image: maven:3.9.9-eclipse-temurin-17
+
+stages:
+  - test
+  - report
+
+services:
+  - name: selenium/standalone-chrome:4.21.0
+    alias: selenium
+
+variables:
+  SELENIUM_REMOTE_URL: "http://selenium:4444/wd/hub"
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
+cache:
+  paths:
+    - .m2/repository
+
+selenium-tests:
+  stage: test
+  script:
+    - mvn clean test
+  artifacts:
+    when: always
+    paths:
+      - target/surefire-reports/
+      - target/allure-results/
+    reports:
+      junit: target/surefire-reports/*.xml
+    expire_in: 7 days
+
+allure-report:
+  stage: report
+  image: frankescobar/allure-docker-service:2.29.0
+  script:
+    - allure generate target/allure-results --clean -o target/allure-report
+  artifacts:
+    when: always
+    paths:
+      - target/allure-report
+    expire_in: 7 days
