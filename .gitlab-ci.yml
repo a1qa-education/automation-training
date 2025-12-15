@@ -3,17 +3,13 @@ stages:
   - report
 
 variables:
-  MAVEN_CLI_OPTS: "-B -Dmaven.test.failure.ignore=false"
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
 
-# --- Stage 1: Run tests ---
 unit-tests:
   stage: test
-  image: maven:3.9.2-eclipse-temurin-17
-  services:
-    - name: selenium/standalone-chrome:114.0
-      alias: selenium
+  image: maven:3.9.3-eclipse-temurin-17
   script:
-    - mvn $MAVEN_CLI_OPTS clean test
+    - mvn clean test
   artifacts:
     when: always
     paths:
@@ -21,7 +17,6 @@ unit-tests:
       - target/surefire-reports
     expire_in: 1 week
 
-# --- Stage 2: Generate Allure report ---
 allure-report:
   stage: report
   image: frankescobar/allure-docker-service:2.35.1
@@ -29,8 +24,7 @@ allure-report:
     - job: unit-tests
       artifacts: true
   script:
-    - mkdir -p target/allure-results
-    - cp -r target/allure-results/* target/allure-results/
+    # Generate the Allure report from the test results
     - allure generate target/allure-results --clean -o target/allure-report
   artifacts:
     when: always
