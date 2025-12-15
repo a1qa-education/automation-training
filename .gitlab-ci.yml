@@ -1,53 +1,74 @@
 stages:
   - test
-  - allure
+  - report
   - pages
 
 variables:
-  MAVEN_CLI_OPTS: "-B -V"
-  ALLURE_RESULTS_DIR: "target/allure-results"
-  ALLURE_REPORT_DIR: "target/allure-report"
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  ALLURE_VERSION: "2.35.1"
+  ALLURE_RESULTS: "target/allure-results"
+  ALLURE_REPORT: "target/allure-report"
 
+# -----------------------
+# 1) Run tests & collect results
+# -----------------------
 unit-tests:
-  stage: test
   image: maven:3.9.3-eclipse-temurin-17
+  stage: test
   script:
-    - mvn $MAVEN_CLI_OPTS clean test
+    - mvn clean test
   artifacts:
+    when: always
     paths:
-      - target/surefire-reports
       - target/allure-results
+      - target/surefire-reports
     expire_in: 1 week
+  only:
+    - branches
+    - merge_requests
 
+# -----------------------
+# 2) Generate Allure report
+# -----------------------
 allure-report:
-  stage: allure
-  image: openjdk:17
-  dependencies:
-    - unit-tests
+  image: maven:3.9.3-eclipse-temurin-17
+  stage: report
+  needs:
+    - job: unit-tests
+      artifacts: true
   script:
-    # Generate Allure report
-    - apt-get update && apt-get install -y wget unzip
-    - wget https://github.com/allure-framework/allure2/releases/download/2.35.1/allure-2.35.1.zip
-    - unzip -o allure-2.35.1.zip -d /opt/
-    - export PATH=$PATH:/opt/allure-2.35.1/bin
-    - allure generate $ALLURE_RESULTS_DIR --clean -o $ALLURE_REPORT_DIR
+    # Install Allure CLI
+    - apt-get update -qq
+    - apt-get install -qq -y wget unzip
+    - wget -q https://github.com/allure-framework/allure2/releases/download/$ALLURE_VERSION/allure-$ALLURE_VERSION.zip
+    - unzip -q allure-$ALLURE_VERSION.zip -d /opt/
+    - export PATH=$PATH:/opt/allure-$ALLURE_VERSION/bin
+    # Generate report
+    - allure generate $ALLURE_RESULTS --clean -o $ALLURE_REPORT
   artifacts:
+    when: always
     paths:
-      - $ALLURE_REPORT_DIR
+      - $ALLURE_REPORT
     expire_in: 1 week
+  only:
+    - branches
+    - merge_requests
 
+# -----------------------
+# 3) Publish via GitLab Pages
+# -----------------------
 pages:
   stage: pages
-  dependencies:
-    - allure-report
+  needs:
+    - job: allure-report
+      artifacts: true
   script:
-    - rm -rf .public
-    - mkdir .public
-    - cp -r target/allure-report/* .public/
+    # Prepare public directory for GitLab Pages
+    - mkdir -p public
+    - cp -r $ALLURE_REPORT/* public/
   artifacts:
     paths:
-      - .public
-    expire_in: 1 week
+      - public
   only:
     - branches
     - merge_requests
