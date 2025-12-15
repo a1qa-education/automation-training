@@ -1,19 +1,22 @@
 stages:
   - test
   - report
+  - pages
 
 variables:
-  MAVEN_CLI_OPTS: "-B -Dmaven.test.failure.ignore=false"
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  ALLURE_VERSION: "2.35.1"   # valid Allure Docker tag
 
-# ----------------------------
-# Run Unit & BDD Tests
-# ----------------------------
+# ---------------------------------------
+# Run tests and produce Allure results
+# ---------------------------------------
 unit-tests:
   image: maven:3.9.3-eclipse-temurin-17
   stage: test
   script:
-    - mvn $MAVEN_CLI_OPTS clean test
+    - mvn clean test
   artifacts:
+    when: always
     paths:
       - target/allure-results
       - target/surefire-reports
@@ -22,22 +25,20 @@ unit-tests:
     - branches
     - merge_requests
 
-# ----------------------------
-# Generate Allure Report
-# ----------------------------
+# ---------------------------------------
+# Generate Allure HTML using Allure Docker
+# ---------------------------------------
 allure-report:
-  image: openjdk:17
+  image: frankescobar/allure-docker-service:${ALLURE_VERSION}
   stage: report
-  dependencies:
-    - unit-tests
+  needs:
+    - job: unit-tests
+      artifacts: true
   script:
-    - apt-get update && apt-get install -y curl unzip
-    # Install allure CLI if not available
-    - curl -sL https://github.com/allure-framework/allure2/releases/latest/download/allure-2.27.0.zip -o allure.zip
-    - unzip allure.zip -d /opt/
-    - export PATH=$PATH:/opt/allure-2.27.0/bin
+    # Generate the Allure report into target/allure-report
     - allure generate target/allure-results --clean -o target/allure-report
   artifacts:
+    when: always
     paths:
       - target/allure-report
     expire_in: 1 week
@@ -45,11 +46,11 @@ allure-report:
     - branches
     - merge_requests
 
-# ----------------------------
-# Publish Allure Report via GitLab Pages
-# ----------------------------
+# ---------------------------------------
+# Publish via GitLab Pages
+# ---------------------------------------
 pages:
-  stage: report
+  stage: pages
   dependencies:
     - allure-report
   script:
@@ -58,6 +59,7 @@ pages:
   artifacts:
     paths:
       - .public
+    expire_in: 1 week
   only:
     - branches
     - merge_requests
