@@ -24,7 +24,6 @@ selenium-tests:
     reports:
       junit: target/surefire-reports/*.xml
 
-# --- Stage 2: Generate Allure report ---
 allure-report:
   stage: report
   image: frankescobar/allure-docker-service:2.30.0
