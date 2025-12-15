@@ -5,8 +5,8 @@
     </listeners>
 
     <test name="Cucumber tests">
-        <packages>
-            <package name="TestRunners.TestRunner"/>
-        </packages>
+        <classes>
+            <class name="TestRunners.TestRunner"/>
+        </classes>
     </test>
 </suite>

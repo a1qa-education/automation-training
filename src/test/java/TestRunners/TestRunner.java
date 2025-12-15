@@ -8,7 +8,6 @@ import io.cucumber.testng.CucumberOptions;
         glue = {"steps", "hooks", "transformations"},
         plugin = {
                 "pretty",
-                "html:target/cucumber-reports.html",
                 "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm"
         },
         monochrome = true
