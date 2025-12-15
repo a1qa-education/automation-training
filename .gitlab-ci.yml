@@ -1,41 +1,51 @@
 stages:
   - test
   - report
+  - pages
 
 variables:
-  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
-  SELENIUM_REMOTE_URL: "http://selenium:4444/wd/hub"
+  MAVEN_CLI_OPTS: "-B -V"
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
 
-# --- Stage 1: Run Selenium + Cucumber tests ---
-selenium-tests:
+unit-tests:
   stage: test
-  image: maven:3.9.3-eclipse-temurin-17
-  services:
-    - name: selenium/standalone-chrome:latest
-      alias: selenium
+  image: maven:3.9.2-eclipse-temurin-17
   script:
-    # Clean, compile, and run TestNG suite pointing to your TestRunner
     - mvn clean test
+    - mkdir -p target/allure-results
   artifacts:
-    when: always
+    name: "unit-tests-artifacts"
     paths:
       - target/allure-results
       - target/surefire-reports
-    reports:
-      junit: target/surefire-reports/*.xml
+    expire_in: 1 week
+    when: always
 
-# --- Stage 2: Generate Allure report ---
 allure-report:
   stage: report
-  image: frankescobar/allure-docker-service:2.30.0
+  image: frankescobar/allure-docker-service:2.35.1
   dependencies:
-    - selenium-tests
+    - unit-tests
   script:
-    # Generate HTML report from Allure results
     - allure generate target/allure-results --clean -o target/allure-report
   artifacts:
-    when: always
+    name: "allure-report"
     paths:
       - target/allure-report
+    expire_in: 1 week
+
+pages:
+  stage: pages
+  image: alpine:3.18
+  dependencies:
+    - allure-report
+  script:
+    # Copy the Allure report to public/ for GitLab Pages
+    - mkdir -p public
+    - cp -r target/allure-report/* public/
+  artifacts:
+    paths:
+      - public
   only:
     - branches
+    - merge_requests
