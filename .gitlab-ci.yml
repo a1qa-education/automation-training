@@ -1,36 +1,55 @@
 stages:
   - test
   - report
-  - pages
 
+variables:
+  MAVEN_CLI_OPTS: "-B -Dmaven.test.failure.ignore=false"
+
+# ----------------------------
+# Run Unit & BDD Tests
+# ----------------------------
 unit-tests:
-  stage: test
   image: maven:3.9.3-eclipse-temurin-17
+  stage: test
   script:
-    - mvn clean test
+    - mvn $MAVEN_CLI_OPTS clean test
   artifacts:
-    when: always
     paths:
       - target/allure-results
       - target/surefire-reports
     expire_in: 1 week
+  only:
+    - branches
+    - merge_requests
 
+# ----------------------------
+# Generate Allure Report
+# ----------------------------
 allure-report:
+  image: openjdk:17
   stage: report
-  image: frankescobar/allure-docker-service:2.35.1
-  needs:
-    - job: unit-tests
-      artifacts: true
+  dependencies:
+    - unit-tests
   script:
+    - apt-get update && apt-get install -y curl unzip
+    # Install allure CLI if not available
+    - curl -sL https://github.com/allure-framework/allure2/releases/latest/download/allure-2.27.0.zip -o allure.zip
+    - unzip allure.zip -d /opt/
+    - export PATH=$PATH:/opt/allure-2.27.0/bin
     - allure generate target/allure-results --clean -o target/allure-report
   artifacts:
-    when: always
     paths:
       - target/allure-report
     expire_in: 1 week
+  only:
+    - branches
+    - merge_requests
 
+# ----------------------------
+# Publish Allure Report via GitLab Pages
+# ----------------------------
 pages:
-  stage: pages
+  stage: report
   dependencies:
     - allure-report
   script:
@@ -40,4 +59,5 @@ pages:
     paths:
       - .public
   only:
-    - main   # or your branch
+    - branches
+    - merge_requests
