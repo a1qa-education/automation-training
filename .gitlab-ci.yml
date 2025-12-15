@@ -1,6 +1,7 @@
 stages:
   - test
   - report
+  - pages
 
 variables:
   MAVEN_CLI_OPTS: "-B -V"
@@ -10,9 +11,7 @@ unit-tests:
   stage: test
   image: maven:3.9.2-eclipse-temurin-17
   script:
-    # Clean previous build, run tests
     - mvn clean test
-    # Generate Allure results locally
     - mkdir -p target/allure-results
   artifacts:
     name: "unit-tests-artifacts"
@@ -28,13 +27,25 @@ allure-report:
   dependencies:
     - unit-tests
   script:
-    # Generate Allure report from downloaded results
     - allure generate target/allure-results --clean -o target/allure-report
   artifacts:
     name: "allure-report"
     paths:
       - target/allure-report
     expire_in: 1 week
+
+pages:
+  stage: pages
+  image: alpine:3.18
+  dependencies:
+    - allure-report
+  script:
+    # Copy the Allure report to public/ for GitLab Pages
+    - mkdir -p public
+    - cp -r target/allure-report/* public/
+  artifacts:
+    paths:
+      - public
   only:
     - branches
     - merge_requests
