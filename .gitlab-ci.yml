@@ -4,7 +4,7 @@ stages:
 
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
-  SELENIUM_REMOTE_URL: "http://selenium:4444/wd/hub" # update if needed
+  SELENIUM_REMOTE_URL: "http://selenium:4444/wd/hub" # if using RemoteWebDriver
 
 # --- Stage 1: Run Selenium tests ---
 selenium-tests:
@@ -26,7 +26,7 @@ selenium-tests:
 # --- Stage 2: Generate Allure report ---
 allure-report:
   stage: report
-  image: frankescobar/allure-docker-service:2.29.0
+  image: frankescobar/allure-docker-service:2.30.0
   dependencies:
     - selenium-tests
   script:
