@@ -5,7 +5,7 @@ stages:
 variables:
   MAVEN_CLI_OPTS: "-B -Dmaven.test.failure.ignore=false"
 
-# Stage 1: Run tests
+# --- Stage 1: Run tests ---
 unit-tests:
   stage: test
   image: maven:3.9.2-eclipse-temurin-17
@@ -15,25 +15,25 @@ unit-tests:
   script:
     - mvn $MAVEN_CLI_OPTS clean test
   artifacts:
+    when: always
     paths:
       - target/allure-results
       - target/surefire-reports
     expire_in: 1 week
 
-# Stage 2: Generate Allure report
+# --- Stage 2: Generate Allure report ---
 allure-report:
   stage: report
-  image: frankescobar/allure-docker-service:2.29.0
+  image: frankescobar/allure-docker-service:2.35.1
   needs:
     - job: unit-tests
       artifacts: true
   script:
-    # Ensure target/allure-results exists
     - mkdir -p target/allure-results
     - cp -r target/allure-results/* target/allure-results/
-    # Generate report
     - allure generate target/allure-results --clean -o target/allure-report
   artifacts:
+    when: always
     paths:
       - target/allure-report
     expire_in: 1 week
