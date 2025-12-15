@@ -48,7 +48,6 @@ public class LoginPageSteps {
             throw new IllegalArgumentException("Таблица учетных данных пуста");
         }
         Map<String, String> creds = rows.get(0);
-
         loginPage.sendTextToUsernameInput(creds.get("login"));
         loginPage.sendTextToPasswordInput(creds.get("password"));
     }
