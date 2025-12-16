@@ -6,7 +6,7 @@ import io.cucumber.java.ParameterType;
 public class CustomTypes {
 
     @ParameterType("успешном|неуспешном")
-    public LoginStatus status(String status) {
+    public static LoginStatus status(String status) {
         if (status.equals("успешном")) {
             return LoginStatus.SUCCESS;
         } else {
